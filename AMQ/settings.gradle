@@ -1,0 +1,3 @@
+rootProject.name = 'AMQ'
+include 'AMQ-producer'
+include 'AMQ-consumer'

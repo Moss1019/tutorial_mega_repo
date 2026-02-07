@@ -1,0 +1,4 @@
+
+dependencies {
+    implementation 'org.apache.qpid:qpid-jms-client:2.9.0'
+}
