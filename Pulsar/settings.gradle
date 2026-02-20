@@ -1,0 +1,4 @@
+rootProject.name = 'Pulsar'
+include 'PulsarProducer'
+include 'PulsarConsumer'
+include 'PulsarConsumer'
