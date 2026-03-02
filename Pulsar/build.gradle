@@ -1,23 +1,23 @@
-subprojects {
-    apply plugin: 'java'
+plugins {
+    id 'java'
+}
 
-    group = 'com.mosson'
-    version = '1.0-SNAPSHOT'
+group = 'com.mosson'
+version = '1.0-SNAPSHOT'
 
-    repositories {
-        mavenCentral()
-    }
+repositories {
+    mavenCentral()
+}
 
-    dependencies {
-        // Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client
-        implementation 'org.apache.pulsar:pulsar-client:4.1.2'
+dependencies {
+    implementation 'org.apache.pulsar:pulsar-client:4.1.3'
+    implementation 'org.apache.pulsar:pulsar-client-admin:4.1.3'
 
-        testImplementation platform('org.junit:junit-bom:5.10.0')
-        testImplementation 'org.junit.jupiter:junit-jupiter'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    }
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
 
-    test {
-        useJUnitPlatform()
-    }
+test {
+    useJUnitPlatform()
 }

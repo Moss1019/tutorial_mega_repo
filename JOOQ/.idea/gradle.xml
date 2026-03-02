@@ -10,6 +10,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/trade-app" />
+            <option value="$PROJECT_DIR$/trade-db" />
           </set>
         </option>
       </GradleProjectSettings>

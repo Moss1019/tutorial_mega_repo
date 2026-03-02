@@ -1,0 +1,3 @@
+rootProject.name = 'JOOQ'
+include 'trade-app'
+include 'trade-db'
