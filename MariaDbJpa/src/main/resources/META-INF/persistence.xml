@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+    <persistence-unit name="mariadb_ctx">
+<!--        Provider -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+<!--        Entities to manage -->
+        <class>com.jpatutorial.model.Account</class>
+        <class>com.jpatutorial.model.Trade</class>
+
+<!--        Database properties -->
+        <properties>
+<!--            SQL DB connection properties -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mariadb://localhost:3306/trade_db"/>
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="secret123!"/>
+            <property name="jakarta.persistence.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+
+<!--            Hibernate properties -->
+            <property name="org.hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+<!--
+possible values
+1. create = create the schema, will remove old data
+2. update = will update the schema, leave old values intact
+3. validate = validate the schema, doesn't make changes
+-->
+
+        </properties>
+    </persistence-unit>
+</persistence>

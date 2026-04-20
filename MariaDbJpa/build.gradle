@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.jpatutorial'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //    JPA and Hibernate
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.2.0'
+    implementation 'org.hibernate.orm:hibernate-core:7.3.0.Final'
+
+    //    MariaDb
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.5.7'
+}

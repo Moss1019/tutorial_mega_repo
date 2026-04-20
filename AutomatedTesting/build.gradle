@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.autotesting'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jooq:jooq:3.20.5"
+    implementation "org.jooq:jooq-codegen:3.20.5"
+    implementation "org.mariadb.jdbc:mariadb-java-client:3.5.7"
+
+    testImplementation platform('org.junit:junit-bom:6.0.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.22.0'
+    testImplementation 'org.testcontainers:testcontainers:2.0.3'
+}
+
+test {
+    useJUnitPlatform()
+}
