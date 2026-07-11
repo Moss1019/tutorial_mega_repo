@@ -1,0 +1,5 @@
+lib/
+assets/
+cmake-build-debug/
+include/
+/.idea
