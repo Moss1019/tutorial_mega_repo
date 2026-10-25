@@ -30,7 +30,15 @@ class _ReceiptPageState extends State<ReceiptPage> {
       _loadState = .loading;
     });
     final receiptService = ServiceProvider.receiptServiceOf(context);
-    _receipts = await receiptService.getAll();
+    final result = await receiptService.getAll();
+    if (result.successful) {
+      _receipts = result.content ?? [];
+    } else {
+      if(mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result.message!)));
+      }
+    }
     setState(() {
       _loadState = .loaded;
     });

@@ -8,3 +8,4 @@ All YouTube tutorial code
 - MariaDB with JPA
 - Automated Java testing
 - SFML and Box2D pong clone
+- Flutter modbile app

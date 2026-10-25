@@ -1,6 +1,8 @@
 
 import 'package:budget_app/model/receipt.dart';
 import 'package:budget_app/repository/receipt_repository.dart';
+import 'package:budget_app/repository/repository.dart';
+import 'package:budget_app/result/op_result.dart';
 import 'package:budget_app/service/domain_service.dart';
 
 class ReceiptService extends DomainService<Receipt> {
@@ -8,35 +10,40 @@ class ReceiptService extends DomainService<Receipt> {
 
   ReceiptService(super.cache, super.repo);
 
-  Future<Receipt?> insert(Receipt r) async {
+  Future<OpResult<Receipt>> insert(Receipt r) async {
     cache.add(r);
 
     final insertRes = await (repo as ReceiptRepository).insert(r);
-    if(insertRes == null) {
-      return null;
+    if (!insertRes.successful) {
+      return OpResult.failedWith(insertRes.message ?? "Failed to insert receipt", insertRes.error);
     }
 
-    return r;
+    return OpResult.success(r);
   }
 
-  Future<List<Receipt>> getAll() async {
-    if(_lastReadReceiptCount == null) {
+  Future<OpResult<List<Receipt>>> getAll() async {
+    if (_lastReadReceiptCount == null) {
       final repoRes = await (repo as ReceiptRepository).getAll();
-      _lastReadReceiptCount = repoRes.length;
-      for(final r in repoRes) {
+      if (!repoRes.successful) {
+        return OpResult.failedWith(repoRes.message ?? "Failed to get all receipts", repoRes.error);
+      }
+      _lastReadReceiptCount = repoRes.content?.length ?? 0;
+      for (final r in repoRes.content ?? []) {
         cache.add(r);
       }
     }
 
-    return cache.getAll();
+    return OpResult.success(cache.getAll());
   }
 
-  Future<Receipt?> get(int id) async {
-    if(_lastReadReceiptCount == null) {
+  Future<OpResult<Receipt>> get(int id) async {
+    if (_lastReadReceiptCount == null) {
       await getAll();
     }
     final res = cache.getAllWhere((r) => r.id == id);
-    if(res.isEmpty) return null;
-    return res[0];
+    if (res.isEmpty) {
+      return OpResult.failedWith("Receipt with id $id not found in cache", ErrorCode.e03);
+    }
+    return OpResult.success(res[0]);
   }
 }

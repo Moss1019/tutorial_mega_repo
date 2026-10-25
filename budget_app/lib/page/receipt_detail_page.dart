@@ -41,11 +41,14 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   void _load() async {
     if (widget._receipt == null) return;
     final receiptLineService = ServiceProvider.receiptLineServiceOf(context);
-    final lines = (await receiptLineService.getForReceipt(widget._receipt!.id))
-        .map((l) => _LineDetails(l.label, l.price)).toList();
+    final result = await receiptLineService.getForReceipt(widget._receipt!.id);
+    final lines = result.successful
+        ? result.content ?? []
+        : <ReceiptLine>[];
+    final details = lines.map((l) => _LineDetails(l.label, l.price)).toList();
     setState(() {
       _selectedDate = widget._receipt!.date;
-      _lines = lines;
+      _lines = details;
     });
   }
 
@@ -102,17 +105,17 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
   Future<void> _saveReceiptData() async {
     final receiptId = _selectedDate.hashCode;
     double total = 0.0;
-    final receiptLineCache = ServiceProvider.receiptLineServiceOf(context);
+    final receiptLineService = ServiceProvider.receiptLineServiceOf(context);
     for(int i = 0; i < _lines.length; ++i) {
       final l = _lines[i];
       total += l.price;
       final lineId = "$receiptId-$i";
       final receiptLine = ReceiptLine(lineId, receiptId, l.label, l.price);
-      await receiptLineCache.insert(receiptLine);
+      await receiptLineService.insert(receiptLine);
     }
-    final receiptCache = ServiceProvider.receiptServiceOf(context);
+    final receiptService = ServiceProvider.receiptServiceOf(context);
     final receipt = Receipt(receiptId, _selectedDate, total);
-    await receiptCache.insert(receipt);
+    await receiptService.insert(receipt);
   }
 
   @override

@@ -1,4 +1,6 @@
 
+import 'package:budget_app/repository/repository.dart';
+import 'package:budget_app/result/op_result.dart';
 import 'package:sqflite/sqflite.dart';
 
 abstract class Repository<T> {
@@ -36,4 +38,12 @@ abstract class Repository<T> {
     _inError = true;
     _error = "Repository error: $ex";
   }
+
+  OpResult<void> success() => OpResult.success(null);
+
+  OpResult<void> failed(String message) => OpResult.failed(message);
+
+  OpResult<T> successWithContent(T content) => OpResult.success(content);
+
+  OpResult<List<T>> successWithList(List<T> list) => OpResult.success(list);
 }
