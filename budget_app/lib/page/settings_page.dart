@@ -8,10 +8,35 @@ class SettingsPage extends StatefulWidget {
   State<StatefulWidget> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animController;
+
+  late final Animation<double> _opacityAnim;
+
   ThemeMode _selectedTheme = ThemeMode.system;
 
   Color _selectedColor = Colors.green;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 2000),
+    );
+    _opacityAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeIn,
+    );
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,76 +44,89 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text(
-              "Settings",
-              style: t.textTheme.headlineMedium?.copyWith(color: t.colorScheme.onPrimary)
+        title: Text(
+          "Settings",
+          style: t.textTheme.headlineMedium?.copyWith(
+            color: t.colorScheme.onPrimary,
           ),
-          backgroundColor: t.colorScheme.primary,
-        iconTheme: IconThemeData(
-          color: t.colorScheme.onPrimary
         ),
+        backgroundColor: t.colorScheme.primary,
+        iconTheme: IconThemeData(color: t.colorScheme.onPrimary),
       ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 32),
-                child: Column(
-                  children: [
-                    Text("Theme"),
-                    DropdownMenu<ThemeMode>(
-                      initialSelection: _selectedTheme,
-                      onSelected: (val) {
-                        setState(() {
-                          _selectedTheme = val!;
-                        });
-                        final messageBus = ServiceProvider.messageBusOf(context);
-                        messageBus.emit("themeMode", val!);
-                      },
-                      dropdownMenuEntries: [
-                        DropdownMenuEntry(
-                          value: ThemeMode.system,
-                          label: "System",
-                        ),
-                        DropdownMenuEntry(
-                          value: ThemeMode.light,
-                          label: "Light",
-                        ),
-                        DropdownMenuEntry(value: ThemeMode.dark, label: "Dark"),
-                      ],
-                    ),
-                  ],
+        child: FadeTransition(
+          opacity: _opacityAnim,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Card(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.symmetric(vertical: 32),
+                  child: Column(
+                    children: [
+                      Text("Theme"),
+                      DropdownMenu<ThemeMode>(
+                        initialSelection: _selectedTheme,
+                        onSelected: (val) {
+                          setState(() {
+                            _selectedTheme = val!;
+                          });
+                          final messageBus = ServiceProvider.messageBusOf(
+                            context,
+                          );
+                          messageBus.emit("themeMode", val!);
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(
+                            value: ThemeMode.system,
+                            label: "System",
+                          ),
+                          DropdownMenuEntry(
+                            value: ThemeMode.light,
+                            label: "Light",
+                          ),
+                          DropdownMenuEntry(
+                            value: ThemeMode.dark,
+                            label: "Dark",
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card(
-              child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 32),
-                child: Column(
-                  children: [
-                    Text("Theme"),
-                    DropdownMenu<Color>(
-                      initialSelection: _selectedColor,
-                      onSelected: (val) {
-                        setState(() {
-                          _selectedColor = val!;
-                        });
-                        final messageBus = ServiceProvider.messageBusOf(context);
-                        messageBus.emit("color", val!);
-                      },
-                      dropdownMenuEntries: [
-                        DropdownMenuEntry(value: Colors.red, label: "Red"),
-                        DropdownMenuEntry(value: Colors.blue, label: "Blue"),
-                        DropdownMenuEntry(value: Colors.green, label: "Green"),
-                      ],
-                    ),
-                  ],
+              Card(
+                child: Padding(
+                  padding: EdgeInsetsGeometry.symmetric(vertical: 32),
+                  child: Column(
+                    children: [
+                      Text("Theme"),
+                      DropdownMenu<Color>(
+                        initialSelection: _selectedColor,
+                        onSelected: (val) {
+                          setState(() {
+                            _selectedColor = val!;
+                          });
+                          final messageBus = ServiceProvider.messageBusOf(
+                            context,
+                          );
+                          messageBus.emit("color", val!);
+                        },
+                        dropdownMenuEntries: [
+                          DropdownMenuEntry(value: Colors.red, label: "Red"),
+                          DropdownMenuEntry(value: Colors.blue, label: "Blue"),
+                          DropdownMenuEntry(
+                            value: Colors.green,
+                            label: "Green",
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

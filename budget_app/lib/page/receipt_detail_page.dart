@@ -22,6 +22,8 @@ class _LineDetails {
 }
 
 class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
+  final GlobalKey<AnimatedListState> _animKey = GlobalKey();
+
   final TextEditingController _labelController = TextEditingController();
 
   final TextEditingController _priceController = TextEditingController();
@@ -83,23 +85,10 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
     if (price == null) return;
     _labelController.clear();
     _priceController.clear();
-    setState(() {
-      _lines.add(_LineDetails(label, price));
-    });
-  }
-
-  List<Widget> _buildLines() {
-    return _lines.map((l) {
-      return Card(
-        child: Padding(
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [Text(l.label), Text("${l.price}")],
-          ),
-        ),
-      );
-    }).toList();
+    final index = _lines.length;
+    _animKey.currentState?.insertItem(index, duration: Duration(milliseconds: 1000));
+    _lines.add(_LineDetails(label, price));
+    setState(() { });
   }
 
   Future<void> _saveReceiptData() async {
@@ -116,6 +105,22 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
     final receiptService = ServiceProvider.receiptServiceOf(context);
     final receipt = Receipt(receiptId, _selectedDate, total);
     await receiptService.insert(receipt);
+  }
+
+  Widget _buildAnimatedLine(BuildContext context, int index, Animation<double> animation) {
+    final l = _lines[index];
+    return FadeTransition(
+      opacity: animation,
+      child: Card(
+        child: Padding(
+          padding: EdgeInsetsGeometry.symmetric(horizontal: 16, vertical: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [Text(l.label), Text("${l.price}")],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -152,7 +157,11 @@ class _ReceiptDetailPageState extends State<ReceiptDetailPage> {
                   )
                 else
                   Text(widget._receipt!.date.formatDate()),
-                Expanded(child: ListView(children: _buildLines())),
+                Expanded(child: AnimatedList(
+                  itemBuilder: _buildAnimatedLine,
+                  key: _animKey,
+                  initialItemCount: _lines.length,
+                )),
                 Row(
                   children: [
                     Expanded(
